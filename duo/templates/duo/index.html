@@ -1,0 +1,98 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'duo/favicon.png' %}" />
+    <title>Duoboard</title>
+    <link rel="stylesheet" href="{% static 'duo/css.css' %}">
+  </head>
+  <body>
+    <div class='nav'>
+      <img src="{% static 'duo/logo.png' %}" alt="logo" width=150px>
+      <div class='dropdown'>
+        <button class="dropdown-button">Leaderboards</button>
+        <div class="dropdown-content">
+          <a href="{% url 'xp' %}">XP Leaderboard</a>
+          <a href="{% url 'streak' %}">Streak Leaderboard</a>
+          <a href="{% url 'lingots' %}">Lingot Leaderboard</a>
+        </div>
+      </div>
+      <a href="{% url 'about' %}">About</a>
+      <a href="{% url 'submit' %}">Submit</a>
+    </div>
+
+    {% if users %}
+      <table id="leaderboard" id="xpleaderboard">
+        <tr>
+          <th colspan="4" style="background-color:
+          {% if xp %}#2599d1;{% endif %}
+          {% if streak %}#f2ab2b;{% endif %}
+          {% if lingots %}#e24848;{% endif %}">
+            {% if xp %}XP Leaderboard{% endif %}
+            {% if streak %}Streak Leaderboard{% endif %}
+            {% if lingots %}Lingot Leaderboard{% endif %}
+          </th>
+        </tr>
+        {% if users %}
+          {% for user in users %}
+            <tr class="user">
+              <td></td>
+              <td><img src="{{user.img}}"></td>
+              <td><a href="{{user.profile}}" target="_blank">{{user.username}}</a></td>
+              {% if xp %}
+                <td>{{user.xp}} xp</td>
+              {% elif streak %}
+                <td>{{user.streak}} <img class="streakicon" src="{% static 'duo/streak.png' %}"></td>
+              {% elif lingots %}
+                <td>{{user.lingots}} <img class="lingoticon" src="{% static 'duo/lingot.png' %}"></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        {% endif %}
+      </table>
+    {% endif %}
+
+    {% if about %}
+      <div class='card'>
+        <h1>Duoboard</h1><br>
+        <p>Duoboard is an unofficial global leaderboard for Duolingo xp, streaks, and lingots.</p>
+        <p>The leaderboards update every 15 minutes. Changed usernames will be automatically removed.</p>
+        <h2>JocelynHeckenkamp@gmail.com</h2>
+        <h3>or contact me on my <a href='http://duolingo.com/Quantum.'>Duolingo profile</a></h3>
+      </div>
+    {% endif %}
+
+    {% if submit %}
+      <div class='card'>
+        <h1>Submit</h1><br>
+        <p>Enter the username found at the end of the profile URL. Usernames are case-sensitive.</p>
+        <p>If you change your username, you will be automatically removed.</p>
+        <img src="{% static 'duo/example.png' %}" alt='exmaple image'><br>
+        <form action='' method='post' id='submit'>
+          {% csrf_token %}
+          {{ form }}
+          <input type='submit' value='Submit'>
+        </form>
+        {% if message %}
+          <p class='message' style='
+            {% if message == "User does not exist." %}
+              background-color: #ff7777;
+              border: 1px solid #ff6666;
+            {% elif message == "Submit successful." %}
+              background-color: #78c800;
+              border: 1px solid #74c100;
+            {% elif message == "User already entered." %}
+              background-color: #f2ab2b;
+              border: 1px solid #e2a02b;
+            {% endif %}'>{{ message }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <script>
+      document.getElementById('submit')[1].focus();
+    </script>
+  </body>
+</html>

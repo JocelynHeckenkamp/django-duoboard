@@ -1,0 +1,6 @@
+u = User(username='Quantum.', profile='http://duolingo.com/Quantum.')
+u.save()
+u = User(username='Barrow15', profile='http://duolingo.com/Barrow15')
+u.save()
+u = User(username='Arnakt_Fen', profile='http://duolingo.com/Arnakt_Fen')
+u.save()
